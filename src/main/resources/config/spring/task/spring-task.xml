@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/task
+       http://www.springframework.org/schema/task/spring-task-4.0.xsd"
+>
+    <!--定时任务器开启-->
+    <task:annotation-driven scheduler="qbScheduler" executor="qbExecutor" mode="proxy"/>
+    <task:scheduler id="qbScheduler" pool-size="3"/>
+    <task:executor id="qbExecutor" pool-size="3"/>
+
+    <!--定时任务应用类-->
+    <bean id="taskJob1" class="scau.zzf.task.TimeJob"></bean>
+    <!--设置应用类各种参数，开启方法-->
+    <task:scheduled-tasks scheduler="qbScheduler">
+        <!--这里表示的是每隔12小时执行一次-->
+        <task:scheduled ref="taskJob1" method="test1" cron = "0 0 0,12 * * ? "/>
+        <task:scheduled ref="taskJob1" method="test2" cron = "0 0 0,12 * * ?"/>
+    </task:scheduled-tasks>
+
+</beans>

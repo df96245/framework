@@ -1,0 +1,103 @@
+<web-app version="3.0"
+         xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="
+    http://java.sun.com/xml/ns/javaee
+    http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+
+  <!-- 加载顺序  context-param -> listener -> filter -> servlet -->
+
+  <!-- 指定Spring Bean的配置文件所在目录。默认配置在WEB-INF目录下 -->
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>classpath:config/spring/applicationContext.xml</param-value>
+  </context-param>
+
+  <!-- 日志记录 -->
+  <context-param>
+    <param-name>log4jConfiguration</param-name>
+    <param-value>classpath:log4j2.xml</param-value>
+  </context-param>
+
+  <listener>
+    <listener-class>org.apache.logging.log4j.web.Log4jServletContextListener</listener-class>
+  </listener>
+
+
+
+  <!-- Spring监听器 -->
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+
+  <!-- 防止Spring内存溢出监听器 -->
+  <listener>
+    <listener-class>org.springframework.web.util.IntrospectorCleanupListener</listener-class>
+  </listener>
+
+  <!-- 编码过滤器 -->
+  <filter>
+    <filter-name>encodingFilter</filter-name>
+    <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+    <async-supported>true</async-supported><!-- 支持异步请求 -->
+    <init-param><!-- UTF-8编码 -->
+      <param-name>encoding</param-name>
+      <param-value>UTF-8</param-value>
+    </init-param>
+    <init-param><!-- 强制编码 -->
+      <param-name>forceEncoding</param-name>
+      <param-value>true</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping><!-- 过滤所有请求 -->
+    <filter-name>encodingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <!-- apache shiro -->
+  <!--DelegatingFilterProxy作用是自动到spring容器查找名字为shiroFilter（filter-name）的bean-->
+  <!--并把所有Filter的操作委托给它。然后将ShiroFilter配置到spring容器即可-->
+  <filter>
+    <filter-name>shiroFilter</filter-name>
+    <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    <async-supported>true</async-supported>
+    <init-param>
+      <param-name>targetFilterLifecycle</param-name>
+      <param-value>true</param-value>
+    </init-param>
+
+    <!--<init-param>-->
+      <!--<param-name>excludedPages</param-name>-->
+      <!--<param-value>/accesstoken</param-value>&lt;!&ndash; 匹配不做拦截的请求声明&ndash;&gt;-->
+    <!--</init-param>-->
+
+  </filter>
+  <filter-mapping>
+
+    <filter-name>shiroFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+  </filter-mapping>
+
+  <!-- Spring MVC servlet -->
+  <servlet>
+    <servlet-name>dispatcher</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <init-param><!-- 指定 Spring MVC 的配置文件 默认为WEB-INF目录下，名称为[<servlet-name>]-servlet.xml，如spring-servlet.xml -->
+      <param-name>contextConfigLocation</param-name>
+      <param-value>classpath:/config/spring/web/dispatcher-servlet.xml</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup><!-- 指定加载顺序 -->
+    <async-supported>true</async-supported><!-- 支持异步请求 -->
+  </servlet>
+  <servlet-mapping><!-- 过滤所有请求 -->
+    <servlet-name>dispatcher</servlet-name>
+    <url-pattern>/</url-pattern>
+  </servlet-mapping>
+
+
+
+
+
+
+</web-app>
