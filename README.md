@@ -59,7 +59,7 @@
 * 已IUserSerive为例子，通过自动注入，IUserService就可以使用定义和实现在AbstractBaseService中的各个方法
 
 ## 版权声明
-iBase4J使用 [Apache License 2.0][] 协议.
+使用 [Apache License 2.0][] 协议.
 
 ##交流
 由于本人技术有限,有不足的地方还请各位提出来,或者加QQ593178092 进行交流
